@@ -19,7 +19,7 @@
                 <span data-i18n="label.language"></span>:
                 <select id="node-input-language" style="width:110px; font-size: 10px !important;  height: 24px; padding:0;" v-model="language">
                     <option value="javascript">Javascript</option>
-                    <option value="python">Python</option>
+                    <option value="python3">Python3</option>
                 </select>
                 <button @click="expandEditor" class="red-ui-button red-ui-button-small"><i class="fa fa-expand"></i></button>
             </div>
@@ -41,7 +41,7 @@
         color: '#fdd0a2',
         defaults: {
             name: {value: ""},
-            language: {"value": "python"},
+            language: {"value": "python3"},
             code: {value: "def method(msg):\n\treturn msg"},
             outputs: {value: 1}  // Ofuscated way to persist the number of outputs of the node
         },

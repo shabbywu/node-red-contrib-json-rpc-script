@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import ast
+import io
 from typing import Dict, Callable
 from textwrap import dedent
+from unittest import mock
 
 import fastapi_jsonrpc as jsonrpc
 from pydantic import BaseModel
@@ -30,15 +32,24 @@ async def call_function(msg: Dict, code: str = dedent(f"""
         return msg
     """)) -> Dict:
     method = compile_method(code)
-    try:
-        payload = method(msg)
-        error = None
-    except Exception as e:
-        error = payload = str(e)
+    stdout = io.StringIO()
+    stderr = io.StringIO()
+    with mock.patch("sys.stdout", stdout), mock.patch("sys.stderr", stderr):
+        try:
+            payload = method(msg)
+            error = None
+        except Exception as e:
+            error = payload = str(e)
+        finally:
+            stdout.seek(0)
+            stderr.seek(0)
 
     if payload is not msg:
         msg["payload"] = payload
         msg["error"] = error
+
+    msg["stdout"] = stdout.read()
+    msg["stderr"] = stderr.read()
     return msg
 
 
